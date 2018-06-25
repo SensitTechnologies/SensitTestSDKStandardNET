@@ -161,7 +161,7 @@ namespace Sensit.TestSDK.Database
         /// <param name="notes">Notes</param>
         /// <param name="issue">Issues from test run</param>
         /// <param name="status">Status of results</param>
-        public void InsertIntoTestRuns(DbProviderFactory factory, String date, String tester, String notes, String issue, String status)
+        public void InsertIntoTestRuns(DbProviderFactory factory, String date, String tester, String notes, String issue, String status, int testCaseID)
         {
             DbConnection cnn = factory.CreateConnection();
             string sql = null;
@@ -173,7 +173,7 @@ namespace Sensit.TestSDK.Database
             DbCommand command = factory.CreateCommand();
             command.Connection = cnn;
             sql = "insert into TestRuns (Date,Tester,TestCaseID,Notes,Issue,Status,EnvironmentID) Values (\'" + date +
-                  "\',\'" + tester + "\',(select MAX(TestCaseID) from TestCases),\'" + notes + "\',\'" + issue +
+                  "\',\'" + tester + "\'," + testCaseID + ",\'" + notes + "\',\'" + issue +
                   "\',\'" + status + "\',(select MAX(EnvironmentID) from DeviceUnderTests));";
 
             command.CommandText = sql;
@@ -272,7 +272,7 @@ namespace Sensit.TestSDK.Database
         /// </summary>
         /// <param name="actualResult">Actual Result</param>
         /// <param name="status">Status of step</param>
-        public void InsertIntoTestStepResults(DbProviderFactory factory, String actualResult, String status, String stepID)
+        public void InsertIntoTestStepResults(DbProviderFactory factory, String actualResult, String status, int stepID, int runID)
         {
             DbConnection cnn = factory.CreateConnection();
             string sql = null;
@@ -284,7 +284,7 @@ namespace Sensit.TestSDK.Database
             DbCommand command = factory.CreateCommand();
             command.Connection = cnn;
             sql = "insert into TestStepResults (ActualResult,Status,TestRunID,TestStepID) Values (\'" + actualResult + "\',\'" +
-                  status + "\',(select MAX(TestRunID) from TestRuns),\'" + stepID + "\');";
+                  status + "\'," + runID + "," + stepID + ");";
 
             command.CommandText = sql;
 
