@@ -60,6 +60,7 @@ namespace Sensit.TestSDK.Database
             get => _password;
             set => _password = value;
         }
+        public object Strings { get; private set; }
 
         /// <summary>
         /// Used to test the connection to the database with the provided credentials from the application settings
@@ -79,6 +80,8 @@ namespace Sensit.TestSDK.Database
         /// <param name="product">Product that you want to add</param>
         public void InsertIntoTestSuites(DbProviderFactory factory, String product)
         {
+            product = product.Replace("'", "''");
+
             DbConnection cnn = factory.CreateConnection();
             string sql = null;
 
@@ -109,6 +112,12 @@ namespace Sensit.TestSDK.Database
         public void InsertIntoTestCases(DbProviderFactory factory, String name, String objective, String owner, String estimatedTime,
             String product, String testCaseNumber)
         {
+            name = name.Replace("'", "''");
+            objective = objective.Replace("'", "''");
+            owner = owner.Replace("'", "''");
+            estimatedTime = estimatedTime.Replace("'", "''");
+            product = product.Replace("'", "''");
+
             DbConnection cnn = factory.CreateConnection();
             string sql = null;
 
@@ -163,6 +172,11 @@ namespace Sensit.TestSDK.Database
         /// <param name="status">Status of results</param>
         public void InsertIntoTestRuns(DbProviderFactory factory, String date, String tester, String notes, String issue, String status, int testCaseID)
         {
+            tester = tester.Replace("'", "''");
+            notes = notes.Replace("'", "''");
+            issue = issue.Replace("'", "''");
+            status = status.Replace("'", "''");
+
             DbConnection cnn = factory.CreateConnection();
             string sql = null;
 
@@ -191,6 +205,9 @@ namespace Sensit.TestSDK.Database
         /// <param name="version">Version</param>
         public void InsertIntoDeviceComponents(DbProviderFactory factory, String name, String version)
         {
+            name = name.Replace("'", "''");
+            version = version.Replace("'", "''");
+
             DbConnection cnn = factory.CreateConnection();
             string sql = null;
 
@@ -218,6 +235,9 @@ namespace Sensit.TestSDK.Database
         /// <param name="quantity">Quantity</param>
         public void InsertIntoEquipment(DbProviderFactory factory, String name, String quantity)
         {
+            name = name.Replace("'", "''");
+            quantity = quantity.Replace("'", "''");
+
             DbConnection cnn = factory.CreateConnection();
             string sql = null;
 
@@ -245,6 +265,10 @@ namespace Sensit.TestSDK.Database
         /// <param name="expectedResult">Expected Result</param>
         public void InsertIntoTestSteps(DbProviderFactory factory, String step, int TestCaseID, String expectedResult, String sequence)
         {
+            step = step.Replace("'", "''");
+            expectedResult = expectedResult.Replace("'", "''");
+            sequence = sequence.Replace("'", "''");
+
             DbConnection cnn = factory.CreateConnection();
             string sql = null;
 
@@ -274,6 +298,9 @@ namespace Sensit.TestSDK.Database
         /// <param name="status">Status of step</param>
         public void InsertIntoTestStepResults(DbProviderFactory factory, String actualResult, String status, int stepID, int runID)
         {
+            actualResult = actualResult.Replace("'", "''");
+            status = status.Replace("'", "''");
+
             DbConnection cnn = factory.CreateConnection();
             string sql = null;
 
@@ -462,7 +489,6 @@ namespace Sensit.TestSDK.Database
            cnn.ConnectionString = "Data Source=" + _server + ";Initial Catalog=" + _database + ";User ID=" + _username +
                                ";Password=" + _password; //Sql Server connection string style
             cnn.Open(); // Opens connection
-
             DbCommand command = factory.CreateCommand();
             command.Connection = cnn;
             command.CommandText = query;
@@ -471,5 +497,6 @@ namespace Sensit.TestSDK.Database
             cnn.Close();
             Console.WriteLine("Query executed successfully");
         }
+
     }
 }
