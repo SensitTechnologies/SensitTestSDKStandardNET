@@ -28,7 +28,8 @@ namespace Sensit.TestSDK.Database
         public string Owner { get; set; }
         public string EstimatedTime { get; set; }
         public int TestSuiteID { get; set; }
-    
+        public int TestCaseNumber { get; set; }
+
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TestStep> TestSteps { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]

@@ -91,9 +91,16 @@ namespace Sensit.TestSDK.Database
 
             DbCommand command = factory.CreateCommand();
             command.Connection = cnn;
-            sql = "Insert into TestSuites (Product) values (\'" + product + "\');";
+            sql = "Insert into TestSuites (Product) values ( @ProductName );";
 
             command.CommandText = sql;
+
+            // Create SQL Parameter for Product Name
+            DbParameter ProductName = command.CreateParameter();
+            ProductName.DbType = DbType.String;
+            ProductName.ParameterName = "@ProductName";
+            ProductName.Value = product;
+            command.Parameters.Add(ProductName);
 
             command.ExecuteNonQuery();
             command.Dispose();
@@ -112,11 +119,6 @@ namespace Sensit.TestSDK.Database
         public void InsertIntoTestCases(DbProviderFactory factory, String name, String objective, String owner, String estimatedTime,
             String product, String testCaseNumber)
         {
-            name = name.Replace("'", "''");
-            objective = objective.Replace("'", "''");
-            owner = owner.Replace("'", "''");
-            estimatedTime = estimatedTime.Replace("'", "''");
-            product = product.Replace("'", "''");
 
             DbConnection cnn = factory.CreateConnection();
             string sql = null;
@@ -127,10 +129,45 @@ namespace Sensit.TestSDK.Database
 
             DbCommand command = factory.CreateCommand();
             command.Connection = cnn;
-            sql = "insert into TestCases (Name,Objective,Owner,EstimatedTime,TestSuiteID,TestCaseNumber) Values (\'" + name + "\',\'" +
-                  objective + "\',\'" + owner + "\',\'" + estimatedTime + "\',(select TestSuiteID from TestSuites where Product = \'" + product + "\')," + Int32.Parse(testCaseNumber) + ");";
+            sql = "insert into TestCases (Name,Objective,Owner,EstimatedTime,TestSuiteID,TestCaseNumber) Values (@Name,@Objective,@Owner,@EstimatedTime,(select TestSuiteID from TestSuites where Product = @Product),@TestCaseNumber);";
 
             command.CommandText = sql;
+
+            // Declare SQL Parameters
+            DbParameter Name = command.CreateParameter();
+            DbParameter Objective = command.CreateParameter();
+            DbParameter Owner = command.CreateParameter();
+            DbParameter EstimatedTime = command.CreateParameter();
+            DbParameter Product = command.CreateParameter();
+            DbParameter TestCaseNumber = command.CreateParameter();
+
+            Name.DbType = DbType.String;
+            Objective.DbType = DbType.String;
+            Owner.DbType = DbType.String;
+            EstimatedTime.DbType = DbType.String;
+            Product.DbType = DbType.String;
+            TestCaseNumber.DbType = DbType.Int32;
+
+            Name.ParameterName = "@Name";
+            Objective.ParameterName = "@Objective";
+            Owner.ParameterName = "@Owner";
+            EstimatedTime.ParameterName = "@EstimatedTime";
+            Product.ParameterName = "@Product";
+            TestCaseNumber.ParameterName = "@TestCaseNumber";
+
+            Name.Value = name;
+            Objective.Value = objective;
+            Owner.Value = owner;
+            EstimatedTime.Value = estimatedTime;
+            Product.Value = product;
+            TestCaseNumber.Value = testCaseNumber;
+
+            command.Parameters.Add(Name);
+            command.Parameters.Add(Objective);
+            command.Parameters.Add(Owner);
+            command.Parameters.Add(EstimatedTime);
+            command.Parameters.Add(Product);
+            command.Parameters.Add(TestCaseNumber);
 
             command.ExecuteNonQuery();
             command.Dispose();
@@ -172,10 +209,6 @@ namespace Sensit.TestSDK.Database
         /// <param name="status">Status of results</param>
         public void InsertIntoTestRuns(DbProviderFactory factory, String date, String tester, String notes, String issue, String status, int testCaseID)
         {
-            tester = tester.Replace("'", "''");
-            notes = notes.Replace("'", "''");
-            issue = issue.Replace("'", "''");
-            status = status.Replace("'", "''");
 
             DbConnection cnn = factory.CreateConnection();
             string sql = null;
@@ -186,11 +219,45 @@ namespace Sensit.TestSDK.Database
 
             DbCommand command = factory.CreateCommand();
             command.Connection = cnn;
-            sql = "insert into TestRuns (Date,Tester,TestCaseID,Notes,Issue,Status,EnvironmentID) Values (\'" + date +
-                  "\',\'" + tester + "\'," + testCaseID + ",\'" + notes + "\',\'" + issue +
-                  "\',\'" + status + "\',(select MAX(EnvironmentID) from DeviceUnderTests));";
+            sql = "insert into TestRuns (Date,Tester,TestCaseID,Notes,Issue,Status,EnvironmentID) Values (@Date,@Tester,@TestCaseID,@Notes,@Issue,@Status,(select MAX(EnvironmentID) from DeviceUnderTests));";
 
             command.CommandText = sql;
+
+            // Declare SQL Parameters
+            DbParameter Date = command.CreateParameter();
+            DbParameter Tester = command.CreateParameter();
+            DbParameter TestCaseID = command.CreateParameter();
+            DbParameter Notes = command.CreateParameter();
+            DbParameter Issue = command.CreateParameter();
+            DbParameter Status = command.CreateParameter();
+
+            Date.DbType = DbType.String;
+            Tester.DbType = DbType.String;
+            TestCaseID.DbType = DbType.Int32;
+            Notes.DbType = DbType.String;
+            Issue.DbType = DbType.String;
+            Status.DbType = DbType.String;
+
+            Date.ParameterName = "@Date";
+            Tester.ParameterName = "@Tester";
+            TestCaseID.ParameterName = "@TestCaseID";
+            Notes.ParameterName = "@Notes";
+            Issue.ParameterName = "@Issue";
+            Status.ParameterName = "@Status";
+
+            Date.Value = date;
+            Tester.Value = tester;
+            TestCaseID.Value = testCaseID;
+            Notes.Value = notes;
+            Issue.Value = issue;
+            Status.Value = status;
+
+            command.Parameters.Add(Date);
+            command.Parameters.Add(Tester);
+            command.Parameters.Add(TestCaseID);
+            command.Parameters.Add(Notes);
+            command.Parameters.Add(Issue);
+            command.Parameters.Add(Status);
 
             command.ExecuteNonQuery();
             command.Dispose();
@@ -205,8 +272,6 @@ namespace Sensit.TestSDK.Database
         /// <param name="version">Version</param>
         public void InsertIntoDeviceComponents(DbProviderFactory factory, String name, String version)
         {
-            name = name.Replace("'", "''");
-            version = version.Replace("'", "''");
 
             DbConnection cnn = factory.CreateConnection();
             string sql = null;
@@ -222,6 +287,22 @@ namespace Sensit.TestSDK.Database
 
             command.CommandText = sql;
 
+            // Declare SQL Parameters
+            DbParameter Name = command.CreateParameter();
+            DbParameter Version = command.CreateParameter();
+
+            Name.DbType = DbType.String;
+            Version.DbType = DbType.String;
+
+            Name.ParameterName = "@Date";
+            Version.ParameterName = "@Tester";
+
+            Name.Value = name;
+            Version.Value = version;
+
+            command.Parameters.Add(Name);
+            command.Parameters.Add(Version);
+
             command.ExecuteNonQuery();
             command.Dispose();
             cnn.Close();
@@ -235,8 +316,6 @@ namespace Sensit.TestSDK.Database
         /// <param name="quantity">Quantity</param>
         public void InsertIntoEquipment(DbProviderFactory factory, String name, String quantity)
         {
-            name = name.Replace("'", "''");
-            quantity = quantity.Replace("'", "''");
 
             DbConnection cnn = factory.CreateConnection();
             string sql = null;
@@ -247,10 +326,25 @@ namespace Sensit.TestSDK.Database
 
             DbCommand command = factory.CreateCommand();
             command.Connection = cnn;
-            sql = "insert into Equipment (Name,Quantity,TestSuiteID) Values (\'" + name + "\',\'" + quantity +
-                  "\',(select MAX(TestSuiteID) from TestSuites));";
+            sql = "insert into Equipment (Name,Quantity,TestSuiteID) Values (@Name,@Quantity,(select MAX(TestSuiteID) from TestSuites));";
 
             command.CommandText = sql;
+
+            // Declare SQL Parameters
+            DbParameter Name = command.CreateParameter();
+            DbParameter Quantity = command.CreateParameter();
+
+            Name.DbType = DbType.String;
+            Quantity.DbType = DbType.String;
+
+            Name.ParameterName = "@Date";
+            Quantity.ParameterName = "@Quantity";
+
+            Name.Value = name;
+            Quantity.Value = quantity;
+
+            command.Parameters.Add(Name);
+            command.Parameters.Add(Quantity);
 
             command.ExecuteNonQuery();
             command.Dispose();
@@ -263,11 +357,8 @@ namespace Sensit.TestSDK.Database
         /// </summary>
         /// <param name="step">Step</param>
         /// <param name="expectedResult">Expected Result</param>
-        public void InsertIntoTestSteps(DbProviderFactory factory, String step, int TestCaseID, String expectedResult, String sequence)
+        public void InsertIntoTestSteps(DbProviderFactory factory, String step, int testCaseID, String expectedResult, String sequence)
         {
-            step = step.Replace("'", "''");
-            expectedResult = expectedResult.Replace("'", "''");
-            sequence = sequence.Replace("'", "''");
 
             DbConnection cnn = factory.CreateConnection();
             string sql = null;
@@ -278,11 +369,35 @@ namespace Sensit.TestSDK.Database
 
             DbCommand command = factory.CreateCommand();
             command.Connection = cnn;
-            sql = "insert into TestSteps (Step,ExpectedResult,TestCaseID,Sequence) Values (\'" + step +
-                  "\',\'" + expectedResult +
-                  "\'," + TestCaseID +",\'" + sequence +"\'); ";
+            sql = "insert into TestSteps (Step,ExpectedResult,TestCaseID,Sequence) Values (@Step,@ExpectedResult,@TestCaseID,@Sequence); ";
 
             command.CommandText = sql;
+
+            // Declare SQL Parameters
+            DbParameter Step = command.CreateParameter();
+            DbParameter TestCaseID = command.CreateParameter();
+            DbParameter ExpectedResult = command.CreateParameter();
+            DbParameter Sequence = command.CreateParameter();
+
+            Step.DbType = DbType.String;
+            TestCaseID.DbType = DbType.Int32;
+            ExpectedResult.DbType = DbType.String;
+            Sequence.DbType = DbType.String;
+
+            Step.ParameterName = "@Step";
+            TestCaseID.ParameterName = "@TestCaseID";
+            ExpectedResult.ParameterName = "@ExpectedResult";
+            Sequence.ParameterName = "@Sequence";
+
+            Step.Value = step;
+            TestCaseID.Value = testCaseID;
+            ExpectedResult.Value = expectedResult;
+            Sequence.Value = sequence;
+
+            command.Parameters.Add(Step);
+            command.Parameters.Add(TestCaseID);
+            command.Parameters.Add(ExpectedResult);
+            command.Parameters.Add(Sequence);
 
             command.ExecuteNonQuery();
             command.Dispose();
@@ -298,8 +413,6 @@ namespace Sensit.TestSDK.Database
         /// <param name="status">Status of step</param>
         public void InsertIntoTestStepResults(DbProviderFactory factory, String actualResult, String status, int stepID, int runID)
         {
-            actualResult = actualResult.Replace("'", "''");
-            status = status.Replace("'", "''");
 
             DbConnection cnn = factory.CreateConnection();
             string sql = null;
@@ -310,10 +423,35 @@ namespace Sensit.TestSDK.Database
 
             DbCommand command = factory.CreateCommand();
             command.Connection = cnn;
-            sql = "insert into TestStepResults (ActualResult,Status,TestRunID,TestStepID) Values (\'" + actualResult + "\',\'" +
-                  status + "\'," + runID + "," + stepID + ");";
+            sql = "insert into TestStepResults (ActualResult,Status,TestRunID,TestStepID) Values (@ActualResult,@Status,@RunID,@StepID);";
 
             command.CommandText = sql;
+
+            // Declare SQL Parameters
+            DbParameter ActualResult = command.CreateParameter();
+            DbParameter Status = command.CreateParameter();
+            DbParameter StepID = command.CreateParameter();
+            DbParameter RunID = command.CreateParameter();
+
+            ActualResult.DbType = DbType.String;
+            Status.DbType = DbType.String;
+            StepID.DbType = DbType.Int32;
+            RunID.DbType = DbType.Int32;
+
+            ActualResult.ParameterName = "@ActualResult";
+            Status.ParameterName = "@Status";
+            StepID.ParameterName = "@StepID";
+            RunID.ParameterName = "@RunID";
+
+            ActualResult.Value = actualResult;
+            Status.Value = status;
+            StepID.Value = stepID;
+            RunID.Value = runID;
+
+            command.Parameters.Add(ActualResult);
+            command.Parameters.Add(Status);
+            command.Parameters.Add(StepID);
+            command.Parameters.Add(RunID);
 
             command.ExecuteNonQuery();
             command.Dispose();
