@@ -314,7 +314,7 @@ namespace Sensit.TestSDK.Database
         /// </summary>
         /// <param name="name">Name of Equipment</param>
         /// <param name="quantity">Quantity</param>
-        public void InsertIntoEquipment(DbProviderFactory factory, String name, String quantity)
+        public void InsertIntoEquipment(DbProviderFactory factory, String name, String quantity, int testSuiteID)
         {
 
             DbConnection cnn = factory.CreateConnection();
@@ -326,25 +326,30 @@ namespace Sensit.TestSDK.Database
 
             DbCommand command = factory.CreateCommand();
             command.Connection = cnn;
-            sql = "insert into Equipment (Name,Quantity,TestSuiteID) Values (@Name,@Quantity,(select MAX(TestSuiteID) from TestSuites));";
+            sql = "insert into Equipment (Name,Quantity,TestSuiteID) Values (@Name,@Quantity,@TestSuiteID);";
 
             command.CommandText = sql;
 
             // Declare SQL Parameters
             DbParameter Name = command.CreateParameter();
             DbParameter Quantity = command.CreateParameter();
+            DbParameter TestSuiteID = command.CreateParameter();
 
             Name.DbType = DbType.String;
             Quantity.DbType = DbType.String;
+            TestSuiteID.DbType = DbType.Int32;
 
-            Name.ParameterName = "@Date";
+            Name.ParameterName = "@Name";
             Quantity.ParameterName = "@Quantity";
+            TestSuiteID.ParameterName = "@TestSuiteID";
 
             Name.Value = name;
             Quantity.Value = quantity;
+            TestSuiteID.Value = testSuiteID;
 
             command.Parameters.Add(Name);
             command.Parameters.Add(Quantity);
+            command.Parameters.Add(TestSuiteID);
 
             command.ExecuteNonQuery();
             command.Dispose();
@@ -483,7 +488,7 @@ namespace Sensit.TestSDK.Database
 
             switch (table)
             {
-                case "Device Components":
+                case "DeviceComponents":
                     while (reader.Read())
                     {
                         objs.Add(new
